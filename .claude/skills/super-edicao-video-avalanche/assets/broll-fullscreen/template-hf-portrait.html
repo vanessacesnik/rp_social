@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-BR" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #07090d;
+        font-family: "Helvetica Neue", "Arial", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: radial-gradient(120% 80% at 50% 0%, #11161f 0%, #07090d 60%);
+        color: #f4f7fb;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* faint vertical guides for an editorial / data feel */
+      .guides {
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 135px 100%;
+        opacity: 0.6;
+      }
+
+      .kicker {
+        position: absolute;
+        top: 150px;
+        left: 90px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: #19e08a;
+        opacity: 0;
+      }
+      .kicker .dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #19e08a;
+        box-shadow: 0 0 22px #19e08a;
+      }
+
+      .headline {
+        position: absolute;
+        top: 218px;
+        left: 90px;
+        width: 880px;
+        margin: 0;
+        font-size: 84px;
+        line-height: 0.98;
+        font-weight: 800;
+        letter-spacing: -2px;
+        text-transform: uppercase;
+        color: #f4f7fb;
+        opacity: 0;
+      }
+      .headline em {
+        font-style: normal;
+        color: #6f7a8a;
+      }
+
+      .statelabel {
+        position: absolute;
+        top: 560px;
+        left: 90px;
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+      }
+      #lbl-antes {
+        color: #ff4747;
+        opacity: 0;
+      }
+      #lbl-hoje {
+        color: #19e08a;
+        opacity: 0;
+      }
+
+      .bignum {
+        position: absolute;
+        top: 612px;
+        left: 84px;
+        width: 912px;
+        font-size: 180px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -6px;
+        white-space: nowrap;
+        color: #ff4747;
+        opacity: 0;
+      }
+      .permes {
+        position: absolute;
+        top: 818px;
+        left: 92px;
+        font-size: 34px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #8a93a3;
+        opacity: 0;
+      }
+
+      .barwrap {
+        position: absolute;
+        left: 90px;
+        bottom: 360px;
+        width: 900px;
+        height: 470px;
+      }
+      .barbase {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 900px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.18);
+      }
+      #bar {
+        position: absolute;
+        left: 0;
+        bottom: 4px;
+        display: block;
+        width: 900px;
+        height: 466px;
+        transform-origin: bottom center;
+        transform: scaleY(1);
+        background: linear-gradient(180deg, #ff4747 0%, #b81d1d 100%);
+        border-radius: 6px 6px 0 0;
+        opacity: 0;
+      }
+
+      #stamp {
+        position: absolute;
+        right: 100px;
+        top: 952px;
+        z-index: 10;
+        font-size: 132px;
+        font-weight: 800;
+        letter-spacing: -4px;
+        color: #19e08a;
+        transform: rotate(-8deg);
+        opacity: 0;
+      }
+      #stamp small {
+        display: block;
+        font-size: 30px;
+        letter-spacing: 5px;
+        font-weight: 700;
+        text-align: right;
+        color: #19e08a;
+        text-transform: uppercase;
+      }
+
+      #arrow {
+        position: absolute;
+        left: 470px;
+        top: 560px;
+        font-size: 140px;
+        line-height: 1;
+        font-weight: 800;
+        color: #19e08a;
+        opacity: 0;
+      }
+
+      .strip {
+        position: absolute;
+        left: 0;
+        bottom: 150px;
+        width: 1080px;
+        padding: 0 90px;
+        box-sizing: border-box;
+        opacity: 0;
+      }
+      .strip .line {
+        height: 4px;
+        width: 120px;
+        background: #19e08a;
+        margin-bottom: 26px;
+      }
+      .strip .txt {
+        margin: 0;
+        font-size: 52px;
+        font-weight: 800;
+        line-height: 1.04;
+        letter-spacing: -1px;
+        color: #f4f7fb;
+        text-transform: uppercase;
+      }
+      .strip .txt b {
+        color: #19e08a;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="broll11"
+      data-width="1080"
+      data-height="1920"
+      data-start="0"
+      data-duration="8"
+    >
+      <section class="scene clip" data-start="0" data-duration="8" data-track-index="1">
+        <div class="guides"></div>
+
+        <div class="kicker"><span class="dot"></span>PROVA REAL</div>
+
+        <h1 class="headline">Minha folha <em>de pagamento</em></h1>
+
+        <div id="lbl-antes" class="statelabel" data-layout-allow-overlap>Antes · por mês</div>
+        <div id="lbl-hoje" class="statelabel" data-layout-allow-overlap>Hoje · por mês</div>
+
+        <div id="bignum" class="bignum">R$ 150.000</div>
+        <div id="permes" class="permes">custo fixo todo mês</div>
+
+        <div id="arrow">↓</div>
+
+        <div id="stamp">−87%<small>de custo</small></div>
+
+        <div class="barwrap">
+          <div id="bar"></div>
+          <div class="barbase"></div>
+        </div>
+
+        <div class="strip">
+          <div class="line"></div>
+          <p class="txt">O time virou <b>inteligência artificial</b></p>
+        </div>
+      </section>
+
+      <script>
+        window.__timelines = window.__timelines || {};
+
+        function brl(n) {
+          var s = Math.round(n).toString();
+          var out = "";
+          var c = 0;
+          for (var i = s.length - 1; i >= 0; i--) {
+            out = s[i] + out;
+            c++;
+            if (c % 3 === 0 && i > 0) out = "." + out;
+          }
+          return "R$ " + out;
+        }
+
+        var bignum = document.getElementById("bignum");
+        var counter = { v: 150000 };
+
+        var tl = gsap.timeline({ paused: true });
+
+        // 0.0–0.6  kicker in
+        tl.fromTo(".kicker", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 0.0);
+        // 0.3–0.9  headline rises
+        tl.fromTo(".headline", { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.3);
+
+        // 0.85  ANTES state: label + big red number + per-month + full red bar
+        tl.fromTo("#lbl-antes", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 0.85);
+        tl.fromTo("#bignum", { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.5)", transformOrigin: "left center" }, 0.95);
+        tl.fromTo("#permes", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 1.2);
+        tl.fromTo("#bar", { opacity: 0, scaleY: 0.0 }, { opacity: 1, scaleY: 1, duration: 0.55, ease: "power3.out" }, 1.0);
+
+        // hold ANTES until 2.7
+
+        // 2.7–4.4  THE CRASH: count down, bar collapses, red → emerald
+        tl.to(counter, {
+          v: 19000,
+          duration: 1.7,
+          ease: "power3.inOut",
+          onUpdate: function () { bignum.textContent = brl(counter.v); },
+        }, 2.7);
+        tl.to("#bignum", { color: "#19e08a", duration: 1.7, ease: "power2.inOut" }, 2.7);
+        tl.to("#bar", { scaleY: 0.127, backgroundColor: "#19e08a", backgroundImage: "none", duration: 1.7, ease: "power3.inOut" }, 2.7);
+
+        // label swap ANTES -> HOJE during the crash
+        tl.to("#lbl-antes", { opacity: 0, y: -16, duration: 0.4, ease: "power2.in" }, 2.7);
+        tl.fromTo("#lbl-hoje", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 3.8);
+
+        // arrow streaks down through the crash
+        tl.fromTo("#arrow", { opacity: 0, y: -40 }, { opacity: 0.9, y: 120, duration: 0.7, ease: "power2.in" }, 2.8);
+        tl.to("#arrow", { opacity: 0, duration: 0.4, ease: "power1.in" }, 3.6);
+
+        // 4.35  −87% stamp pops
+        tl.fromTo("#stamp", { opacity: 0, scale: 0.4, rotate: -22 }, { opacity: 1, scale: 1, rotate: -8, duration: 0.55, ease: "back.out(2.2)" }, 4.35);
+        tl.to("#permes", { color: "#19e08a", duration: 0.5 }, 4.4);
+
+        // 5.0  bottom punch strip rises and holds
+        tl.fromTo(".strip", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 5.0);
+
+        // gentle settle on the number to the end
+        tl.to("#bignum", { scale: 1.03, duration: 1.2, ease: "sine.inOut", transformOrigin: "left center" }, 5.6);
+
+        window.__timelines["broll11"] = tl;
+      </script>
+    </div>
+  </body>
+</html>

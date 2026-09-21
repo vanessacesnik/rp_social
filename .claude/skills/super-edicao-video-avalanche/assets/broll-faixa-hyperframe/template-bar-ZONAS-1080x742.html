@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* ===== FAIXA 1080x742 (16:11) — Avalanche dark ===== */
+      html,body{margin:0;padding:0;width:1080px;height:742px;overflow:hidden;background:#07090d;
+        font-family:"Helvetica Neue","Arial",sans-serif;-webkit-font-smoothing:antialiased;}
+      #root{position:relative;width:1080px;height:742px;overflow:hidden;color:#f4f7fb;
+        background:radial-gradient(120% 140% at 0% 0%, #11161f 0%, #07090d 62%);}
+      .guides{position:absolute;inset:0;opacity:.45;
+        background-image:linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+        background-size:120px 100%;}
+      .topline{position:absolute;top:0;left:0;height:8px;width:1080px;background:#19e08a;
+        transform-origin:left center;transform:scaleX(0);box-shadow:0 0 24px #19e08a;}
+
+      /* ---- ZONA ESQUERDA: kicker + headline (largura travada 600px, x:64..664) ---- */
+      .kicker{position:absolute;top:60px;left:64px;width:600px;display:flex;align-items:center;gap:18px;
+        font-size:30px;font-weight:700;letter-spacing:6px;text-transform:uppercase;color:#19e08a;opacity:0;}
+      .kicker .dot{width:16px;height:16px;border-radius:50%;background:#19e08a;box-shadow:0 0 18px #19e08a;flex:none;}
+      .headline{position:absolute;top:150px;left:64px;width:600px;margin:0;
+        font-size:84px;line-height:.98;font-weight:800;letter-spacing:-2px;text-transform:uppercase;color:#f4f7fb;opacity:0;}
+      .headline b{color:#19e08a;font-weight:800;}
+      .sub{position:absolute;top:560px;left:64px;width:600px;font-size:28px;line-height:1.2;font-weight:600;color:#8a93a3;opacity:0;}
+
+      /* ---- ZONA DIREITA: visual (x:712..1016, sem encostar na esquerda) ---- */
+      .viz{position:absolute;top:0;left:712px;width:304px;height:742px;display:flex;flex-direction:column;
+        align-items:flex-end;justify-content:center;gap:18px;}
+      .bignum{font-size:188px;line-height:.9;font-weight:800;letter-spacing:-6px;color:#19e08a;opacity:0;text-align:right;}
+      .bignum .u{font-size:64px;color:#8a93a3;}
+      .vlabel{font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8a93a3;opacity:0;text-align:right;}
+
+      /* ---- PROGRESSO (rodapé, faixa inteira) ---- */
+      .prog{position:absolute;left:64px;bottom:48px;width:952px;height:5px;background:rgba(255,255,255,.12);}
+      .prog i{position:absolute;left:0;top:0;height:5px;width:952px;background:#19e08a;transform-origin:left center;transform:scaleX(0);display:block;}
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="barref" data-width="1080" data-height="742" data-start="0" data-duration="10">
+      <section class="scene clip" data-start="0" data-duration="10" data-track-index="1" style="position:absolute;inset:0">
+        <div class="guides"></div>
+        <div class="topline"></div>
+        <div class="kicker"><span class="dot"></span>RELATÓRIO ANTHROPIC</div>
+        <h1 class="headline">FIM DA<br><b>ERA DO CHAT</b></h1>
+        <div class="sub">A interação migrou do bate-papo para agentes autônomos.</div>
+        <div class="viz">
+          <div class="bignum" id="num">0<span class="u">%</span></div>
+          <div class="vlabel">DOS TOKENS EM AGENTES</div>
+        </div>
+        <div class="prog"><i></i></div>
+      </section>
+      <script>
+        window.__timelines=window.__timelines||{};
+        var tl=gsap.timeline({paused:true});
+        tl.fromTo(".topline",{scaleX:0},{scaleX:1,duration:.6,ease:"power3.out"},0);
+        tl.fromTo(".kicker",{opacity:0,x:-30},{opacity:1,x:0,duration:.5,ease:"power2.out"},.15);
+        tl.fromTo(".headline",{opacity:0,y:40},{opacity:1,y:0,duration:.7,ease:"power3.out"},.35);
+        tl.fromTo(".bignum",{opacity:0,scale:.8},{opacity:1,scale:1,duration:.7,ease:"back.out(1.6)"},.6);
+        tl.fromTo(".vlabel",{opacity:0,y:14},{opacity:1,y:0,duration:.5,ease:"power2.out"},.9);
+        tl.fromTo(".sub",{opacity:0,y:18},{opacity:1,y:0,duration:.6,ease:"power2.out"},1.0);
+        var o={v:0};
+        tl.to(o,{v:73,duration:1.4,ease:"power2.out",onUpdate:function(){document.getElementById("num").firstChild.nodeValue=Math.round(o.v);}},.6);
+        tl.fromTo(".prog i",{scaleX:0},{scaleX:1,duration:9.4,ease:"none"},.4);
+        window.__timelines["barref"]=tl;
+      </script>
+    </div>
+  </body>
+</html>

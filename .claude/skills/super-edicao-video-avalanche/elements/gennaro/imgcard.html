@@ -1,0 +1,97 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="_base.css">
+<style>
+/* Param-driven gpt-image-2 hero card with ANIMATED BORDER + Ken Burns.
+   URL params: src, dur, kb(push|panl|panr), accent(cyan|coral|green), logos(csv), title */
+:root{--w:820px;--h:547px;}
+#wrap{position:absolute;left:50%;top:1150px;transform:translateX(-50%);width:var(--w);height:var(--h);will-change:transform,opacity;}
+#card{position:absolute;inset:0;border-radius:30px;overflow:hidden;background:#05070B;
+  box-shadow:0 46px 100px rgba(0,0,0,.66);}
+#img{position:absolute;inset:-2%;width:104%;height:104%;object-fit:cover;will-change:transform;}
+#veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,11,0) 55%,rgba(5,7,11,.28) 100%);pointer-events:none;}
+#inner{position:absolute;inset:0;border-radius:30px;border:2px solid rgba(255,255,255,.10);pointer-events:none;}
+/* animated running-dash border */
+#bsvg{position:absolute;inset:-6px;width:calc(var(--w) + 12px);height:calc(var(--h) + 12px);overflow:visible;pointer-events:none;}
+#trackGlow{fill:none;stroke-width:5;opacity:.9;}
+#dash{fill:none;stroke-width:5;stroke-linecap:round;}
+.kick{position:absolute;left:0;top:-64px;width:100%;text-align:center;font-family:'MontX';font-size:30px;
+  letter-spacing:5px;color:rgba(255,255,255,.72);text-transform:uppercase;}
+#logos{position:absolute;right:18px;top:18px;display:flex;gap:12px;}
+.lg{width:76px;height:76px;border-radius:18px;background:rgba(9,11,16,.82);backdrop-filter:blur(6px);
+  border:1.5px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px rgba(0,0,0,.5);will-change:transform,opacity;}
+.lg img{width:44px;height:44px;display:block;}
+.lg.ig{background:linear-gradient(135deg,#F9CE34 5%,#EE2A7B 45%,#6228D7 90%);border-color:rgba(255,255,255,.3);}
+.lg.ig img{filter:brightness(0) invert(1);}   /* white glyph on gradient */
+/*SAFE-V2*/#stage{transform:scale(0.904);transform-origin:540px 1402px;}
+</style></head>
+<body><div id="stage">
+  <div id="wrap">
+    <svg id="bsvg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#3EC8FF"/><stop offset=".5" stop-color="#9B6BFF"/><stop offset="1" stop-color="#3EC8FF"/>
+        </linearGradient>
+      </defs>
+      <rect id="trackGlow" x="6" y="6" rx="34" ry="34"/>
+      <rect id="dash" x="6" y="6" rx="34" ry="34"/>
+    </svg>
+    <div class="kick" id="kick"></div>
+    <div id="card"><img id="img"><div id="veil"></div><div id="inner"></div></div>
+    <div id="logos"></div>
+  </div>
+</div>
+<script src="_lib.js"></script>
+<script>
+const {seg,E,clamp}=window.__lib;
+const q=new URLSearchParams(location.search);
+const SRC=q.get('src'), DUR=parseFloat(q.get('dur')||'5'), KB=q.get('kb')||'push';
+const ACC=q.get('accent')||'cyan';
+const ACOL={cyan:'#3EC8FF',coral:'#F5402E',green:'#24D869'}[ACC]||'#3EC8FF';
+const wrap=document.getElementById('wrap'),img=document.getElementById('img');
+const dash=document.getElementById('dash'),trackGlow=document.getElementById('trackGlow'),kick=document.getElementById('kick');
+img.src=SRC;
+window.__assetsReady=()=>img.complete && img.naturalWidth>0;
+if(q.get('title')) kick.textContent=q.get('title');
+// solid-color accent for the coral/green modes (keep gradient only for cyan default)
+if(ACC!=='cyan'){ dash.setAttribute('stroke',ACOL); } else { dash.setAttribute('stroke','url(#grad)'); }
+trackGlow.setAttribute('stroke',ACOL);
+// size the border rects to the wrap box
+const W=820,H=547;
+[dash,trackGlow].forEach(r=>{r.setAttribute('width',W);r.setAttribute('height',H);});
+// perimeter for dash math
+const per=2*((W-12)+(H-12));
+dash.style.strokeDasharray=`46 30`;
+// logos
+const LG=(q.get('logos')||'').split(',').filter(Boolean);
+const logosEl=document.getElementById('logos');
+LG.forEach(n=>{const d=document.createElement('div');d.className='lg'+(n==='instagram'?' ig':'');
+  const im=document.createElement('img');im.src=`/logos/${n}.svg`;d.appendChild(im);logosEl.appendChild(d);});
+const lgs=[...document.querySelectorAll('.lg')];
+
+window.__seek=function(t){
+  // entrance + exit of whole card
+  const inO=E.outCubic(seg(t,0.02,0.42));
+  const inS=E.outBack(seg(t,0.02,0.55),1.5);
+  const rise=(1-E.outCubic(seg(t,0.02,0.55)))*42;
+  const outO=1-E.inOutCubic(seg(t,DUR-0.42,0.4));
+  wrap.style.opacity=clamp(inO)*clamp(outO);
+  wrap.style.transform=`translateX(-50%) translateY(${rise}px) scale(${0.92+0.08*clamp(inS)})`;
+  // Ken Burns on the image
+  const kp=E.inOutCubic(clamp(t/DUR));
+  if(KB==='panl')      img.style.transform=`scale(1.06) translateX(${(-3+6*kp).toFixed(2)}%)`;
+  else if(KB==='panr') img.style.transform=`scale(1.06) translateX(${(3-6*kp).toFixed(2)}%)`;
+  else                 img.style.transform=`scale(${(1.0+0.085*kp).toFixed(4)})`;   // push
+  // running dash border
+  dash.style.strokeDashoffset = (-t*150).toFixed(1);
+  // breathing glow
+  const pulse=0.55+0.45*(0.5+0.5*Math.sin(t*3.4));
+  trackGlow.style.opacity=(0.35+0.4*pulse).toFixed(3);
+  dash.style.filter=`drop-shadow(0 0 ${(6+8*pulse).toFixed(1)}px ${ACOL})`;
+  // logo chips bounce in (staggered) after 0.5s
+  lgs.forEach((el,i)=>{const p=E.outBack(seg(t,0.55+i*0.16,0.42),2.4);
+    el.style.opacity=clamp(seg(t,0.55+i*0.16,0.3)*1.4)*clamp(outO);
+    el.style.transform=`scale(${clamp(0.2+0.8*p)})`;});
+};
+window.__seek(0);
+</script></body></html>

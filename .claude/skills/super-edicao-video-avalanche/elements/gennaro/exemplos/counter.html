@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="_base.css">
+<style>
+/* Dramatic slow-response reveal: clock counting up to 1h22m (danger coral). */
+#c3{position:absolute;top:1170px;width:760px;left:50%;transform:translateX(-50%);text-align:center;
+  background:linear-gradient(180deg,rgba(27,20,20,.96),rgba(15,9,9,.97));border:3px solid rgba(245,64,46,.5);
+  border-radius:30px;padding:30px 40px 34px;box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 50px rgba(245,64,46,.2);
+  will-change:transform,opacity;}
+.lab{font-family:'MontX';font-size:28px;letter-spacing:6px;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;gap:16px;}
+.lab .warn{color:var(--coral);font-size:34px;}
+.disp{font-family:'Mont';font-size:150px;line-height:.92;color:var(--coral);letter-spacing:2px;white-space:nowrap;
+  font-variant-numeric:tabular-nums;text-shadow:0 0 46px rgba(245,64,46,.55),0 6px 0 rgba(0,0,0,.3);}
+.disp small{font-size:56px;opacity:.75;letter-spacing:0;}
+.foot{font-family:'Mont';font-size:36px;color:#fff;text-transform:uppercase;letter-spacing:1px;margin-top:14px;}
+.foot b{color:var(--coral);}
+/*SAFE-V2*/#stage{transform:scale(0.984);transform-origin:540px 1345px;}
+</style></head>
+<body><div id="stage">
+  <div id="c3">
+    <div class="lab"><span class="warn">&#9888;</span> Tempo de resposta</div>
+    <div class="disp"><span id="hh">0</span><small>h</small> <span id="mm">00</span><small>min</small></div>
+    <div class="foot">CLIENTE <b>QUASE PERDIDO</b></div>
+  </div>
+</div>
+<script src="_lib.js"></script>
+<script>
+const {seg,E,count,clamp}=window.__lib;
+const DUR=parseFloat(new URLSearchParams(location.search).get('dur')||'4.55');
+const c3=document.getElementById('c3'),hh=document.getElementById('hh'),mm=document.getElementById('mm');
+window.__seek=function(t){
+  const inS=E.outBack(seg(t,0.05,0.5),1.6);
+  const rise=(1-E.outCubic(seg(t,0.05,0.55)))*60;
+  const outO=1-E.inOutCubic(seg(t,DUR-0.5,0.5));
+  c3.style.opacity=clamp(seg(t,0.05,0.4)*1.5)*clamp(outO);
+  // shake a touch on the settle for danger feel
+  const shake=(t>2.4&&t<2.9)?Math.sin(t*70)*2:0;
+  c3.style.transform=`translateX(-50%) translateY(${rise}px) translateX(${shake}px) scale(${0.88+0.12*clamp(inS)})`;
+  // count up: hours 0->1, minutes 0->22, land ~t=2.6
+  const p=seg(t,0.7,1.9);
+  hh.textContent=Math.round(count(p,0,1,E.outExpo));
+  mm.textContent=String(Math.round(count(p,0,22,E.outExpo))).padStart(2,'0');
+};
+window.__seek(0);
+</script></body></html>

@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="_base.css">
+<style>
+#c10{position:absolute;top:1220px;width:852px;left:50%;transform:translateX(-50%);text-align:center;}
+.stamp{position:absolute;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:24px;white-space:nowrap;
+  background:linear-gradient(180deg,#14261A,#0B140F);border:3px solid rgba(36,216,105,.55);border-radius:26px;
+  padding:26px 44px;box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 44px rgba(36,216,105,.22);will-change:transform,opacity;}
+.stamp .ck{width:58px;height:58px;flex:0 0 auto;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;}
+.stamp .tx{font-family:'Mont';font-size:48px;color:#fff;text-transform:uppercase;letter-spacing:.5px;}
+.stamp .tx b{color:var(--green);}
+.sub{position:absolute;left:50%;transform:translateX(-50%);top:118px;font-family:'MontX';font-size:30px;
+  color:rgba(255,255,255,.66);text-transform:uppercase;letter-spacing:2px;white-space:nowrap;}
+</style></head>
+<body><div id="stage">
+  <div id="c10">
+    <div class="stamp" id="st">
+      <div class="ck"><svg width="36" height="36" viewBox="0 0 38 38"><path d="M8 20 L16 28 L30 11" fill="none" stroke="#0B140F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="tx"><b>Qualquer</b> empresa</div>
+    </div>
+    <div class="sub" id="sb">Um produto que você oferece</div>
+  </div>
+</div>
+<script src="_lib.js"></script>
+<script>
+const {seg,E,clamp}=window.__lib;
+const DUR=parseFloat(new URLSearchParams(location.search).get('dur')||'2.4');
+const st=document.getElementById('st'),sb=document.getElementById('sb');
+window.__seek=function(t){
+  const p=E.outBack(seg(t,0.1,0.55),1.3);
+  st.style.opacity=clamp(seg(t,0.1,0.35)*1.5);
+  st.style.transform=`translateX(-50%) scale(${0.66+0.34*p})`;
+  const sp=seg(t,1.0,0.5);sb.style.opacity=E.outCubic(sp);sb.style.transform=`translateX(-50%) translateY(${(1-E.outCubic(sp))*26}px)`;
+  document.getElementById('c10').style.opacity=clamp(1-E.inOutCubic(seg(t,DUR-0.5,0.5)));
+};
+window.__seek(0);
+</script></body></html>

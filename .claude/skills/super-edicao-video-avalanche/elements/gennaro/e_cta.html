@@ -1,0 +1,69 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="_base.css">
+<style>
+/* NEW CTA layout: COMENTA (small, top) + EU QUERO (giant coral, own line, pop/pulse) + comment composer. DM toast kept. */
+#kick{position:absolute;left:50%;transform:translateX(-50%);top:1232px;white-space:nowrap;
+  font-family:'MontX';font-size:52px;letter-spacing:16px;color:rgba(255,255,255,.85);text-transform:uppercase;text-align:center;}
+#big{position:absolute;left:50%;top:1300px;white-space:nowrap;
+  font-family:'Mont';font-size:116px;line-height:1;color:var(--coral);text-transform:uppercase;letter-spacing:-1px;
+  text-shadow:0 0 54px rgba(245,64,46,.6),0 8px 0 rgba(0,0,0,.28);transform-origin:50% 50%;will-change:transform,opacity;}
+#cmp{position:absolute;left:50%;top:1500px;transform:translateX(-50%);display:flex;align-items:center;gap:22px;
+  background:#0A0C10;border:2px solid rgba(255,255,255,.16);border-radius:999px;padding:20px 24px 20px 26px;
+  box-shadow:0 26px 60px rgba(0,0,0,.6);white-space:nowrap;will-change:transform,opacity;}
+#cmp .pf{width:66px;height:66px;flex:0 0 auto;border-radius:50%;background:linear-gradient(135deg,#3EC8FF,#9B6BFF);
+  display:flex;align-items:center;justify-content:center;font-family:'Mont';font-size:34px;color:#0B0D12;}
+#cmp .ph{font-family:'MontB';font-size:38px;color:rgba(255,255,255,.5);text-transform:none;letter-spacing:.3px;}
+#cmp .send{width:70px;height:70px;flex:0 0 auto;border-radius:50%;background:#0A84FF;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 22px rgba(10,132,255,.5);}
+/* DM toast, upper zone (kept), width trimmed to safe area */
+#tst{position:absolute;left:50%;top:300px;display:flex;align-items:center;gap:22px;width:812px;padding:26px 30px;
+  background:rgba(238,240,244,.92);border-radius:34px;box-shadow:0 30px 70px rgba(0,0,0,.5);will-change:transform,opacity;}
+#tst .igw{width:74px;height:74px;flex:0 0 auto;border-radius:22px;
+  background:linear-gradient(135deg,#F9CE34 5%,#EE2A7B 45%,#6228D7 90%);display:flex;align-items:center;justify-content:center;}
+#tst .igw svg{width:42px;height:42px;}
+#tst .tc{display:flex;flex-direction:column;line-height:1.15;}
+#tst .tc .r1{display:flex;align-items:center;gap:14px;}
+#tst .tc b{font-family:'Mont';font-size:38px;color:#0B0D12;}
+#tst .tc .tm{font-family:'MontB';font-size:26px;color:#6b7280;}
+#tst .tc .msg{font-family:'MontB';font-size:31px;color:#20242c;margin-top:6px;}
+#tst .tc .kw{color:#E11D48;font-family:'Mont';}
+</style></head>
+<body><div id="stage">
+  <div id="tst">
+    <div class="igw"><svg viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="11" stroke="#fff" stroke-width="4"/><circle cx="24" cy="24" r="9" stroke="#fff" stroke-width="4"/><circle cx="35" cy="13" r="2.6" fill="#fff"/></svg></div>
+    <div class="tc"><div class="r1"><b>Denderson</b><span class="tm">agora</span></div><div class="msg">Chegou seu <span class="kw">EU QUERO</span>. Bora montar sua IA.</div></div>
+  </div>
+  <div id="kick">COMENTA</div>
+  <div id="big">EU QUERO</div>
+  <div id="cmp">
+    <div class="pf">D</div>
+    <div class="ph">escreve aqui</div>
+    <div class="send"><svg width="32" height="32" viewBox="0 0 34 34"><path d="M17 26 V10 M9 18 L17 9 L25 18" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+  </div>
+</div>
+<script src="_lib.js"></script>
+<script>
+const {seg,E,clamp}=window.__lib;
+const kick=document.getElementById('kick'),big=document.getElementById('big'),cmp=document.getElementById('cmp'),tst=document.getElementById('tst');
+window.__seek=function(t){
+  // COMENTA kicker: fade + slight rise
+  const kp=E.outCubic(seg(t,0.05,0.4));
+  kick.style.opacity=kp; kick.style.transform=`translateX(-50%) translateY(${(1-kp)*22}px)`;
+  // EU QUERO giant: pop entrance (overshoot) + subtle continuous pulse; centered via translateX(-50%)
+  const pop=E.outBack(seg(t,0.18,0.62),2.3);
+  const pulse=1+0.03*Math.sin((t-0.95)*5)*(t>0.95?1:0);
+  const sc=(0.42+0.58*pop)*pulse;
+  big.style.opacity=clamp(seg(t,0.18,0.3)*1.6);
+  big.style.transform=`translateX(-50%) scale(${sc})`;
+  // comment composer: rise in
+  const cp=E.outBack(seg(t,0.6,0.6),1.5);
+  cmp.style.opacity=clamp(seg(t,0.6,0.4)*1.5);
+  cmp.style.transform=`translateX(-50%) translateY(${(1-cp)*70}px)`;
+  // DM toast slides from top after the CTA lands, gentle bob
+  const tp=E.outBack(seg(t,1.5,0.7),1.3);
+  const bob=Math.sin((t-2.2)*1.8)*3*(t>2.2?1:0);
+  tst.style.opacity=clamp(seg(t,1.5,0.4)*1.5);
+  tst.style.transform=`translateX(-50%) translateY(${(-70*(1-tp))+bob}px)`;
+};
+window.__seek(0);
+</script></body></html>

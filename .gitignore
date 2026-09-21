@@ -1,0 +1,18 @@
+# saídas de edição (master, renders, provas) não entram no repositório
+/work/
+/renders/
+/out/
+*.mov
+*.mkv
+*.wav.tmp
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# node
+node_modules/
+
+# sistema
+.DS_Store

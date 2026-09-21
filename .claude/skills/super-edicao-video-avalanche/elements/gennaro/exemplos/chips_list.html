@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="_base.css">
+<style>
+#c5{position:absolute;top:1150px;width:852px;left:50%;transform:translateX(-50%);}
+.hd{position:absolute;left:0;width:852px;text-align:center;font-family:'MontX';font-size:30px;letter-spacing:5px;
+  color:rgba(255,255,255,.6);text-transform:uppercase;}
+.bub{position:absolute;left:0;width:760px;display:flex;align-items:flex-start;gap:20px;
+  background:linear-gradient(180deg,#12242b,#0b171c);border:2px solid rgba(62,200,255,.4);border-radius:26px;border-top-left-radius:8px;
+  padding:24px 30px;box-shadow:0 22px 46px rgba(0,0,0,.5);will-change:transform,opacity;}
+.bub .av{width:66px;height:66px;flex:0 0 auto;border-radius:50%;background:linear-gradient(135deg,#3EC8FF,#9B6BFF);
+  display:flex;align-items:center;justify-content:center;}
+.bub .av svg{width:38px;height:38px;}
+.bub .mt{font-family:'MontB';font-size:39px;color:#fff;line-height:1.2;}
+.bub .mt b{color:var(--cyan);font-family:'Mont';}
+.conf{position:absolute;right:16px;display:flex;align-items:center;gap:18px;white-space:nowrap;
+  background:linear-gradient(180deg,#14261A,#0B140F);border:2px solid rgba(36,216,105,.55);border-radius:999px;
+  padding:16px 28px;box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 30px rgba(36,216,105,.2);will-change:transform,opacity;}
+.conf .ck{width:44px;height:44px;flex:0 0 auto;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;}
+.conf .tx{font-family:'Mont';font-size:38px;color:#fff;text-transform:uppercase;letter-spacing:.5px;}
+.conf .tx b{color:var(--green);}
+/*SAFE-V2*/#stage{transform:scale(0.868);transform-origin:540px 1317px;}
+</style></head>
+<body><div id="stage">
+  <div id="c5">
+    <div class="hd" id="hd" style="top:0;">O AGENTE FAZ A ABORDAGEM</div>
+    <div class="bub" id="bub" style="top:62px;">
+      <div class="av"><svg viewBox="0 0 40 40" fill="none"><rect x="8" y="12" width="24" height="18" rx="6" stroke="#fff" stroke-width="3"/><circle cx="15" cy="21" r="2.5" fill="#fff"/><circle cx="25" cy="21" r="2.5" fill="#fff"/><line x1="20" y1="6" x2="20" y2="12" stroke="#fff" stroke-width="3"/><circle cx="20" cy="5" r="2.5" fill="#fff"/></svg></div>
+      <div class="mt">Oi! Eu ofereço <b>implementação de IA</b> na sua empresa</div>
+    </div>
+    <div class="conf" id="cf1" style="top:250px;"><div class="ck"><svg width="26" height="26" viewBox="0 0 26 26"><path d="M5 13 L11 19 L21 7" fill="none" stroke="#0B140F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="tx"><b>Várias</b> reuniões marcadas</div></div>
+  </div>
+</div>
+<script src="_lib.js"></script>
+<script>
+const {seg,E,clamp}=window.__lib;
+const DUR=parseFloat(new URLSearchParams(location.search).get('dur')||'6.9');
+const hd=g('hd'),bub=g('bub'),cf1=g('cf1');
+function g(i){return document.getElementById(i);}
+window.__seek=function(t){
+  hd.style.opacity=E.outCubic(seg(t,0.1,0.4));
+  // outreach bubble slides in from left
+  const p=seg(t,0.5,0.5);bub.style.opacity=E.outCubic(p);
+  bub.style.transform=`translate(${(1-E.outBack(p,1.4))*-22}px,${(1-E.outCubic(p))*20}px)`;
+  // confirmation pill pops at ~5.2s (when he says "marcar varias reunioes")
+  const cp=E.outBack(seg(t,5.0,0.5),1.3);
+  cf1.style.opacity=clamp(seg(t,5.0,0.32)*1.5);
+  cf1.style.transform=`scale(${0.5+0.5*cp})`;
+  g('c5').style.opacity=clamp(1-E.inOutCubic(seg(t,DUR-0.5,0.5)));
+};
+window.__seek(0);
+</script></body></html>

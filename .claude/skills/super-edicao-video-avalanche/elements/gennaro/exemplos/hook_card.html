@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="_base.css">
+<style>
+/* Cold-open promise card: the absurd premise stated up front (coral danger). SAFE-AREA: 812px. */
+#hk{top:1044px;width:812px;padding:34px 40px 40px;text-align:center;}
+.kick{font-family:'MontX';font-size:30px;letter-spacing:7px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
+.l1{font-family:'Mont';font-size:52px;color:#fff;text-transform:uppercase;letter-spacing:.5px;line-height:1;white-space:nowrap;}
+.l2{font-family:'Mont';font-size:64px;color:var(--coral);text-transform:uppercase;letter-spacing:-1px;line-height:1.02;white-space:nowrap;
+  text-shadow:0 0 42px rgba(245,64,46,.5),0 6px 0 rgba(0,0,0,.25);margin-top:8px;}
+.sub{font-family:'MontB';font-size:34px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px;margin-top:18px;}
+.clk{position:absolute;left:50%;top:-46px;transform:translateX(-50%);width:0;height:0;}
+/*SAFE-V2*/#stage{transform:scale(0.919);transform-origin:540px 1231px;}
+</style></head>
+<body><div id="stage">
+  <div class="card glow-coral" id="hk">
+    <div class="kick">OLHA ESSE ABSURDO</div>
+    <div class="l1" id="l1">A IA DELE</div>
+    <div class="l2" id="l2">COBRA O VENDEDOR</div>
+    <div class="sub" id="sub">por responder devagar</div>
+  </div>
+</div>
+<script src="_lib.js"></script>
+<script>
+const {seg,E,place,show,clamp}=window.__lib;
+const DUR=parseFloat(new URLSearchParams(location.search).get('dur')||'3.9');
+const hk=document.getElementById('hk');
+const l1=document.getElementById('l1'),l2=document.getElementById('l2'),sub=document.getElementById('sub');
+function lerpS(a,b,p){return a+(b-a)*p;}
+window.__seek=function(t){
+  const inO=E.outCubic(seg(t,0.05,0.5));
+  const inS=E.outBack(seg(t,0.05,0.55),1.4);
+  const rise=(1-E.outCubic(seg(t,0.05,0.55)))*70;
+  const outO=1-E.inOutCubic(seg(t,DUR-0.5,0.5));
+  show(hk, clamp(inO)*clamp(outO));
+  place(hk,{ty:rise, scale:lerpS(0.9,1,inS)});
+  // staged reveal: l1 -> l2 (punch) -> sub
+  l1.style.opacity=E.outCubic(seg(t,0.15,0.4));
+  const p2=E.outBack(seg(t,0.55,0.5),2.0);
+  l2.style.opacity=clamp(seg(t,0.55,0.3)*1.5);
+  l2.style.transform=`scale(${lerpS(0.7,1,p2)})`;
+  const ps=seg(t,1.15,0.5); sub.style.opacity=E.outCubic(ps);
+  sub.style.transform=`translateY(${(1-E.outCubic(ps))*24}px)`;
+};
+window.__seek(0);
+</script></body></html>

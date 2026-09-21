@@ -1,0 +1,7 @@
+      </div>
+      <div id="coluna">
+        <video id="video-chefe" class="clip" src="assets/chefe.mp4" data-start="0" data-duration="717.28" data-track-index="0" muted></video>
+      </div>
+      <audio id="audio-chefe" src="assets/chefe.m4a" data-start="0" data-duration="717.28"></audio>
+    </div>
+

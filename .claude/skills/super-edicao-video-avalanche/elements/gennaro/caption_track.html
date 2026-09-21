@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="_base.css">
+<style>
+#cap{position:absolute;left:0;width:1080px;top:1074px;transform:translateY(-50%);text-align:center;will-change:opacity;}
+.ci{font-family:'Mont';font-size:61px;color:#fff;text-transform:uppercase;letter-spacing:.3px;line-height:1;
+  -webkit-text-stroke:6px #0C0C0F;paint-order:stroke fill;
+  text-shadow:0 5px 0 rgba(0,0,0,.30),0 0 22px rgba(0,0,0,.45);
+  display:inline-block;white-space:nowrap;will-change:transform;}
+.ci .g{color:#24D869;} .ci .c{color:#F5402E;}
+</style></head>
+<body><div id="stage">
+  <div id="cap"><span class="ci" id="ci"></span></div>
+</div>
+<script src="_lib.js"></script>
+<script>
+const {seg,E,clamp}=window.__lib;
+fetch('/captions/captions.json').then(r=>r.json()).then(caps=>{
+  const cap=document.getElementById('cap'), ci=document.getElementById('ci');
+  let curIdx=-1;
+  function render(ev){
+    ci.innerHTML=ev.p.map(p=>p.c==='w'?p.t:`<span class="${p.c}">${p.t}</span>`).join(' ');
+  }
+  window.__seek=function(t){
+    let idx=-1;
+    for(let i=0;i<caps.length;i++){ if(t>=caps[i].s && t<caps[i].e){ idx=i; break; } }
+    if(idx<0){ cap.style.opacity=0; return; }
+    if(idx!==curIdx){ render(caps[idx]); curIdx=idx; }
+    const ev=caps[idx], loc=t-ev.s, dur=ev.e-ev.s;
+    const pin=E.outBack(seg(loc,0,0.13),2.0);
+    const fadeIn=clamp(loc/0.07), fadeOut=1-clamp((loc-(dur-0.08))/0.08);
+    cap.style.opacity=clamp(fadeIn*fadeOut);
+    ci.style.transform=`scale(${0.86+0.14*clamp(pin)})`;
+  };
+});
+</script></body></html>

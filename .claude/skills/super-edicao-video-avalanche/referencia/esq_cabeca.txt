@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Mont"; src: url("assets/fonts/Montserrat-Bold.ttf"); font-weight: 700; }
+      @font-face { font-family: "Mont"; src: url("assets/fonts/Montserrat-ExtraBold.ttf"); font-weight: 800; }
+      @font-face { font-family: "Mont"; src: url("assets/fonts/Montserrat-Black.ttf"); font-weight: 900; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0B0D12; }
+      body { font-family: "Mont", sans-serif; color: #0F172A; }
+      #painel { position: absolute; left: 32px; top: 32px; width: 1252px; height: 1016px;
+        background: #F7F5F0; border-radius: 34px; overflow: hidden; }
+      #coluna { position: absolute; left: 1316px; top: 32px; width: 572px; height: 1016px;
+        border-radius: 34px; overflow: hidden; background: #12151C; }
+      #coluna video { width: 572px; height: 1016px; object-fit: cover; display: block; }
+      .cab { position: absolute; left: 64px; top: 54px; display: flex; align-items: center; gap: 18px; }
+      .marca-a { width: 44px; height: 44px; border-radius: 12px; background: #0F172A;
+        display: flex; align-items: center; justify-content: center;
+        color: #E8B33A; font-weight: 900; font-size: 26px; line-height: 1; }
+      .marca-nome { font-weight: 800; font-size: 26px; letter-spacing: -0.01em; }
+      .marca-kicker { font-weight: 700; font-size: 15px; letter-spacing: 0.18em; color: #615F58; }
+      .regua { position: absolute; left: 64px; top: 122px; width: 1124px; height: 2px; background: #E2DFD5; }
+      .capitulo { position: absolute; left: 64px; top: 152px; font-weight: 800; font-size: 19px; letter-spacing: 0.16em; }
+      .beat { position: absolute; left: 64px; top: 214px; display: flex; align-items: center; gap: 14px; }
+      .beat-num { background: #0F172A; color: #F7F5F0; font-weight: 800; font-size: 15px; padding: 5px 11px; border-radius: 8px; }
+      .beat-txt { font-weight: 700; font-size: 17px; letter-spacing: 0.16em; color: #0E7490; }
+      .headline { position: absolute; left: 64px; width: 1090px; font-weight: 800; font-size: 76px;
+        line-height: 0.99; letter-spacing: -0.025em; }
+      .sub { position: absolute; left: 64px; width: 1000px; font-weight: 700; font-size: 28px; line-height: 1.32; color: #5D5B54; }
+      .rod { position: absolute; left: 64px; bottom: 44px; font-weight: 700; font-size: 15px; letter-spacing: 0.18em; color: #5F5D56; }
+      .barra-rot { position: absolute; left: 64px; font-weight: 700; font-size: 22px; color: #5D5B54; }
+      .barra-tubo { position: absolute; left: 64px; height: 46px; border-radius: 10px; background: #E7E3D8; overflow: hidden; }
+      .barra-fill { height: 46px; border-radius: 10px; width: 0; }
+      .barra-val { position: absolute; font-weight: 900; font-size: 28px; }
+      .pill { position: absolute; left: 64px; width: 1124px; height: 100px; border-radius: 18px;
+        background: #FFFFFF; border: 3px solid #E2DFD5; display: flex; align-items: center; padding: 0 34px; gap: 22px; }
+      .pill-num { font-weight: 900; font-size: 44px; color: #0E7490; min-width: 92px; }
+      .pill-txt { font-weight: 700; font-size: 29px; }
+      .pill-alerta { border-color: #F5402E; }
+      .pill-alerta .pill-num { color: #F5402E; }
+      .img-area { position: absolute; left: 0; top: 340px; width: 1252px; height: 396px; overflow: hidden; background: #0B0D12; }
+      .clip.livre .beat { top: 34px; }
+      .img-area.grande { top: 146px; height: 690px; }
+      .img-area.grande img { height: 690px; }
+      .img-area.info { left: 40px; width: 1172px; box-sizing: border-box; border: 3px solid #2E3A4E;
+        border-radius: 16px; background: #0F172A; }
+      .img-area.info img { width: 1166px; height: 684px; object-fit: contain; }
+      .img-area img { width: 1252px; height: 396px; object-fit: cover; display: block; }
+      #img-area { position: absolute; left: 0; top: 340px; width: 1252px; height: 396px; overflow: hidden; background: #0B0D12; }
+      #img-area img { width: 1252px; height: 396px; object-fit: cover; display: block; }
+      .faixa, #faixa { position: absolute; left: 0; top: 744px; width: 1252px; height: 152px; background: #0F172A; overflow: hidden; }
+      .faixa-rot { position: absolute; left: 64px; top: 22px; font-weight: 700; font-size: 16px; letter-spacing: 0.2em; color: #4FD8EF; }
+      .faixa-dado { position: absolute; left: 64px; top: 54px; font-weight: 800; font-size: 36px; color: #F7F5F0; letter-spacing: -0.015em; }
+      .ticker-linha, #ticker-linha { position: absolute; left: 64px; top: 112px; width: 1124px; display: flex; justify-content: space-between; gap: 20px; }
+      .tick { font-weight: 700; font-size: 15px; letter-spacing: 0.08em; color: #B7BDC8; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="717.30" data-width="1920" data-height="1080">
+      <div id="painel">
+        <div id="chrome-fixo" class="clip" data-start="0" data-duration="717.30" data-track-index="3">
+          <div class="cab">
+            <div class="marca-a">A</div>
+            <div>
+              <div class="marca-nome">Avalanche</div>
+              <div class="marca-kicker">IA APLICADA A NEGÓCIOS</div>
+            </div>
+          </div>
+          <div class="regua"></div>
+          <div class="rod">AVALANCHE &middot; MAPA DO EPISÓDIO</div>
+        </div>
+        <div id="rotulo-capitulo" class="clip capitulo" data-start="0" data-duration="717.30" data-track-index="1">O TIME QUE QUASE ME QUEBROU</div>
+

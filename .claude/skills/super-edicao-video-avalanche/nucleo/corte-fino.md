@@ -1,0 +1,134 @@
+# NÚCLEO: CORTE FINO (silêncio e roteiro)
+
+## O PADRÃO DE SILÊNCIO É O CORTE SECO COM RECUO DE 0,5s (ordem do Chefe, 02/09/2026)
+
+Em QUALQUER vídeo que ele mandar editar, o silêncio se corta pela técnica dele: corte seco em
+cada pausa, logo antes do ataque da próxima palavra, e o trecho seguinte puxado 0,5s pra trás
+por cima da cauda do anterior. O vídeo troca na hora e o áudio do trecho anterior segue por
+baixo, misturado. Ninguém apara a fala, o que some é o vão. Skill própria em
+`~/.claude/skills/corte-seco-recuo-05/` e scripts espelhados aqui:
+
+```bash
+python3 scripts/nucleo/corte_recuo.py entrada.mp4 saida.mp4 --plano plano_recuo.json
+python3 scripts/nucleo/verifica_recuo.py --entrada entrada.mp4 --saida saida.mp4 --plano plano_recuo.json
+```
+
+Ordem obrigatória: (1) quebra da quarta parede e retakes (corta a primeira tomada, mantém a
+segunda), (2) recuo no arquivo já limpo, (3) `VERIFICACAO_OK` do `verifica_recuo.py`, (4) só
+então legenda, faixa, b-roll e o resto do modelo. As legendas e elementos se reancoram pelo
+mapa `segs`/`T` do plano (tempo original de cada trecho e onde ele caiu na linha do tempo).
+
+Aprovado por ele no vídeo de estreia: 27 cortes, 158s para 144,5s, igual ao que ele fez à mão
+no CapCut. Palavra que o verificador listar como MASCARADA vai no reporte com o tempo.
+
+O método abaixo (corte_seguro.py, respiro de 160 a 280ms) fica como referência e como
+fallback quando ele pedir explicitamente "corte de silêncio sem recuo" ou "mantém as pausas
+curtas".
+
+
+Vale para TODOS os modelos. Ordem do Chefe em 25/07/2026, palavra por palavra: *"corte de silêncio,
+tem que ser preciso, não pode ter erro nisso. Nunca pode cortar uma palavra no meio, nunca pode
+cortar uma palavra antes dela começar e cortar a letra da palavra, sempre tem que ser um corte
+seguro e muito fino, para não deixar erro e para também não ter silêncio pelo vídeo."*
+
+São duas exigências que puxam para lados opostos: cortar rente sem nunca encostar na fala. Quem
+tenta resolver com uma fonte só de informação quebra um dos dois lados.
+
+## POR QUE AS FERRAMENTAS ÓBVIAS FALHAM
+
+O `silencedetect` mede **energia**. O ataque de consoante surda (p, t, k, f, s) e a respiração antes
+da palavra ficam abaixo do limiar, então ele diz que o silêncio dura mais do que dura. Cortar até
+onde ele aponta come a primeira letra, e o vídeo sai falando "essoa" no lugar de "pessoa".
+
+O whisper marca **palavra**, mas com folga: ele estica os timestamps para cobrir a pausa. Medido no
+vídeo real de 25/07, ele reportou vão ZERO entre duas palavras onde o áudio tinha 600ms de silêncio,
+e chegou a esticar uma palavra por quase meio segundo. Guardar as bordas só por ele congela o corte:
+no mesmo vídeo, isso deixou o resultado em 1,09s removidos contra os 4,08s que o áudio permitia.
+
+## O MÉTODO (implementado em `scripts/nucleo/corte_seguro.py`)
+
+1. O áudio vira um **envelope de RMS em janelas de 10ms**. É a resolução que falta ao silencedetect.
+2. O **piso de ruído sai do próprio áudio** (percentil 20 do envelope, multiplicado por 2,2), não de
+   um número chutado. Sala barulhenta e sala tratada têm pisos diferentes.
+3. O `silencedetect` serve só para **levantar candidatos**. Dentro de cada candidato, procura-se o
+   maior bloco contíguo de janelas abaixo do piso: esse é o silêncio de verdade.
+4. **Guardas curtas** nas duas pontas do bloco medido: 80ms depois da fala anterior (cauda e
+   plosivo), 60ms antes da próxima (ataque da consoante).
+5. **Trava dura 1, por evidência:** se sobrar UMA janela de 10ms com energia acima do piso dentro do
+   trecho a remover, o corte inteiro é recusado.
+6. **Trava dura 2, contra sussurro:** nenhuma palavra do whisper pode ser coberta em 70% ou mais.
+   Entrar na folga das pontas é permitido, engolir a palavra não. Isso protege o caso em que a fala
+   termina sussurrada, abaixo do piso, e a energia não a enxerga.
+7. **Respiro obrigatório:** nunca se remove o vão inteiro. Fica de 160 a 280ms conforme o tamanho da
+   pausa, mais ar nas transições de bloco. Pausa zerada vira fala metralhada e emenda audível.
+8. Corte menor que 120ms não compensa: a emenda aparece mais que o ganho.
+9. **Na dúvida, mantém.** Toda recusa entra no relatório com o motivo, para você auditar o que ficou.
+
+O script devolve os intervalos a remover, os keeps, o mapa `tempo_original → tempo_final` (necessário
+para reancorar legenda, elemento e gancho) e a lista de recusados com o porquê.
+
+```bash
+python3 scripts/nucleo/corte_seguro.py --video original.mp4 --words audio16k.json \
+    --base-dur <fim_da_ultima_palavra> --out render/plano_corte.json
+```
+
+## A PROVA (obrigatória, `scripts/nucleo/verifica_palavras.py`)
+
+Planejar não é provar. Depois de cortar, o vídeo **é transcrito de novo** e a sequência de palavras é
+comparada com a do original. O script acusa palavra que sumiu e palavra picotada (quando a nova é um
+pedaço da original, o sintoma exato da letra comida), e sai com código 1 se achar qualquer uma.
+
+```bash
+python3 scripts/nucleo/verifica_palavras.py --orig audio16k.json --cortado build/corpo.mp4
+```
+
+Sem essa saída em `VERIFICACAO_OK`, o corte não está aceito e o vídeo não é entregue. Divergência de
+grafia de nome próprio é reportada à parte, porque é erro do whisper e não do corte.
+
+## EMENDA
+
+Corte seco (jump cut) em vídeo e áudio no MESMO ponto, com micro-fade de áudio de 10ms em cada
+emenda para matar o clique. Nunca crossfade sobreposto, que dessincroniza A/V ao longo de dezenas de
+emendas. Em VSL longa e em qualquer material com muitos cortes, cortar **por índice de frame e
+sample** (ver `modelos/vsl-longa.md`, seção de sincronia labial): trim por tempo quantiza o vídeo e
+o áudio de formas diferentes e acumula drift.
+
+## QUEBRA DA QUARTA PAREDE: ele fala com o editor no meio da gravação
+
+**Passo obrigatório, antes de qualquer corte** (ordem do Chefe, 25/07/2026): *"sempre busque falas
+onde estou quebrando a quarta parede: 'errei, corta essa parte' ou similares"*.
+
+Ele grava sozinho. Quando erra, dá a instrução em voz alta no meio da tomada: "errei, corta as duas
+falas anteriores", "peraí, deixa eu refazer", "esquece, recomeça". Se ninguém procurar por isso, a
+instrução vira conteúdo e o erro fica no vídeo publicado.
+
+```bash
+python3 scripts/nucleo/detecta_instrucoes.py --words audio16k.json --json instrucoes.json
+```
+
+O script varre a transcrição atrás de marcas fortes (errei, corta, tira essa parte, esquece,
+recomeça, vou refazer) e fracas (peraí, volta, de novo, deixa eu), e para cada uma **acha a
+repetição**: procura o maior trecho de fala que aparece duas ou mais vezes antes da instrução, que
+é por onde o corte precisa começar. Entrega o intervalo sugerido e o texto que sairia.
+
+Ele **não corta nada**. Corte de conteúdo continua exigindo o OK, item a item.
+
+Validado no vídeo da imersão de 3min49s: ele gravou a mesma frase três vezes e disse "errei, corto
+as duas falas anteriores" em 140,2s. O detector propôs 129,2 a 142,1s, praticamente igual ao corte
+feito a mão (127,8 a 142,5s).
+
+## CORTE DE ROTEIRO EM VÍDEO LONGO (YouTube e VSL)
+
+Silêncio se corta sozinho. **Trecho de conteúdo, não.** Em vídeo longo, a skill lê a transcrição
+inteira e **propõe** o que dá para abrir mão, e você decide item a item:
+
+- Apresentar cada trecho candidato com timestamp de início e fim, o texto do que sai, a duração e o
+  motivo (repetição do que já foi dito, leitura verbatim longa, subtrama que não muda o argumento,
+  divagação que não fecha).
+- Quando ajudar a decidir, extrair os trechos como clipes e abrir no Mac para você assistir o que
+  sairia.
+- Você aprova ou veta **um por um**. Nada de conteúdo sai sem o seu sim.
+- Cortar sempre em pausa limpa, com o mesmo corte seguro descrito acima.
+
+Nunca aplicar corte de roteiro por conta própria, em nenhum modelo. A regra vale mesmo quando o
+trecho parece obviamente descartável.

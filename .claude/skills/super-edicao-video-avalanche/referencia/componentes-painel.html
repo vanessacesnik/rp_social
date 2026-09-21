@@ -1,0 +1,333 @@
+<!--
+  componentes-painel.html · os sete componentes do painel escuro, prontos para copiar.
+
+  Cada bloco vem em duas partes, HTML e JS, exatamente no formato que o `build.py` espera.
+  Troque `cNN` pelo id da cena e `T` pelo tempo de início dela. Todo tempo marcado como
+  `T+x` tem que ser substituído pelo instante REAL da palavra, medido na transcrição:
+  fatiar a cena em partes iguais é o erro que fez a tela mostrar a etapa 2 enquanto ele
+  falava da 4.
+
+  O CSS de todos eles está no fim do arquivo e entra no bloco <style> do esqueleto.
+-->
+
+<!-- ============================================================ 1. FLUXO
+     A corrente de etapas. Cada bloco acende quando ele cita a etapa, e o conector
+     cresce antes do próximo acender. Para "primeiro isso, depois aquilo".
+     Quatro etapas cabem em 1124px: 245px de bloco e 48px de conector.
+-->
+<div id="cNN" class="clip livre" data-start="T" data-duration="D" data-track-index="2">
+  <div id="cNN-hl" class="headline" style="top: 92px; font-size: 46px; opacity: 0">o caminho que o lead faz</div>
+  <div class="fluxo" style="top: 230px">
+    <div id="cNN-e1" class="fl-bloco"><div class="fl-num">01</div><div class="fl-tit">anúncio</div><div class="fl-txt">ele vê e clica</div></div>
+    <div id="cNN-c1" class="fl-conector"></div>
+    <div id="cNN-e2" class="fl-bloco"><div class="fl-num">02</div><div class="fl-tit">página</div><div class="fl-txt">lê a oferta</div></div>
+    <div id="cNN-c2" class="fl-conector"></div>
+    <div id="cNN-e3" class="fl-bloco"><div class="fl-num">03</div><div class="fl-tit">cadastro</div><div class="fl-txt">deixa o contato</div></div>
+    <div id="cNN-c3" class="fl-conector"></div>
+    <div id="cNN-e4" class="fl-bloco"><div class="fl-num">04</div><div class="fl-tit">checkout</div><div class="fl-txt">paga o ingresso</div></div>
+  </div>
+  <div id="cNN-faixa" class="faixa" style="top: 850px; opacity: 0">
+    <div class="faixa-rot">O CAMINHO</div>
+    <div id="cNN-dado" class="faixa-dado">ele vê o anúncio</div>
+  </div>
+</div>
+<!--JS-->
+tl.fromTo("#cNN-hl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45 }, T+0.36);
+tl.fromTo("#cNN-faixa", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5 }, T);
+/* cada etapa acende no instante da palavra, e o conector cresce ANTES da próxima */
+tl.fromTo("#cNN-e1", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.42, ease: "expo.out" }, T+0.90);
+tl.fromTo("#cNN-c1", { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: "quart.inOut" }, T+1.60);
+tl.fromTo("#cNN-e2", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.42, ease: "expo.out" }, T+1.94);
+tl.fromTo("#cNN-c2", { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: "quart.inOut" }, T+2.70);
+tl.fromTo("#cNN-e3", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.42, ease: "expo.out" }, T+3.04);
+tl.fromTo("#cNN-c3", { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: "quart.inOut" }, T+3.80);
+tl.fromTo("#cNN-e4", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.42, ease: "expo.out" }, T+4.14);
+/* a etapa ativa ganha a borda fria e as outras voltam ao neutro */
+tl.to("#cNN-e1 .fl-num", { backgroundColor: "#4FD8EF", color: "#0F172A", duration: 0.3 }, T+0.90);
+
+
+<!-- ============================================================ 2. CONTADOR
+     O número se forma. Nunca aparece pronto. Dois números relacionados contam
+     juntos e o segundo termina depois, para o olho comparar.
+-->
+<div id="cNN" class="clip livre" data-start="T" data-duration="D" data-track-index="2">
+  <div id="cNN-hl" class="headline" style="top: 92px; font-size: 46px; opacity: 0">quantos entraram e quantos pagaram</div>
+  <div class="cont-par" style="top: 250px">
+    <div id="cNN-a" class="cont-bloco">
+      <div class="cont-rot">ENTRARAM NA PÁGINA</div>
+      <div id="cNN-an" class="cont-num">0</div>
+      <div class="cont-uni">pessoas</div>
+    </div>
+    <div id="cNN-b" class="cont-bloco">
+      <div class="cont-rot">PAGARAM O INGRESSO</div>
+      <div id="cNN-bn" class="cont-num quente">0</div>
+      <div class="cont-uni">pessoas</div>
+    </div>
+  </div>
+  <div id="cNN-faixa" class="faixa" style="top: 850px; opacity: 0">
+    <div class="faixa-rot">A CONTA REAL</div>
+    <div id="cNN-dado" class="faixa-dado">15 mil viram a página</div>
+  </div>
+</div>
+<!--JS-->
+tl.fromTo("#cNN-hl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45 }, T+0.36);
+tl.fromTo("#cNN-faixa", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5 }, T);
+tl.fromTo("#cNN-a", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, T+0.80);
+/* o número CONTA. `fmt` já existe no esqueleto e formata em pt-BR. */
+tl.to({ v: 0 }, { v: 15000, duration: 1.5, ease: "quart.out",
+  onUpdate: function () { trocaD("cNN-an", fmt(this.targets()[0].v)); } }, T+0.95);
+tl.fromTo("#cNN-b", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, T+2.60);
+tl.to({ v: 0 }, { v: 320, duration: 1.8, ease: "quart.out",
+  onUpdate: function () { trocaD("cNN-bn", fmt(this.targets()[0].v)); } }, T+2.75);
+
+
+<!-- ============================================================ 3. BARRAS
+     A comparação que cresce. Vermelho é o que dói, verde é o ganho, ciano é neutro.
+     O valor conta junto com a barra.
+-->
+<div id="cNN" class="clip livre" data-start="T" data-duration="D" data-track-index="2">
+  <div id="cNN-hl" class="headline" style="top: 92px; font-size: 46px; opacity: 0">o que eu gastava e o que eu gasto</div>
+  <div class="barras" style="top: 250px">
+    <div class="ba-linha">
+      <div class="ba-rot">antes, em ferramenta</div>
+      <div class="ba-tubo"><div id="cNN-b1" class="ba-fill" style="background: #F5402E"></div></div>
+      <div id="cNN-v1" class="ba-val quente">0</div>
+    </div>
+    <div class="ba-linha">
+      <div class="ba-rot">hoje, com a equipe</div>
+      <div class="ba-tubo"><div id="cNN-b2" class="ba-fill" style="background: #24D869"></div></div>
+      <div id="cNN-v2" class="ba-val positivo">0</div>
+    </div>
+  </div>
+  <div id="cNN-faixa" class="faixa" style="top: 850px; opacity: 0">
+    <div class="faixa-rot">A DIFERENÇA</div>
+    <div id="cNN-dado" class="faixa-dado">passava de 20 mil por mês</div>
+  </div>
+</div>
+<!--JS-->
+tl.fromTo("#cNN-hl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45 }, T+0.36);
+tl.fromTo("#cNN-faixa", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5 }, T);
+tl.fromTo("#cNN-b1", { width: 0 }, { width: 720, duration: 1.3, ease: "quart.out" }, T+0.90);
+tl.to({ v: 0 }, { v: 20000, duration: 1.3, ease: "quart.out",
+  onUpdate: function () { trocaD("cNN-v1", fmt(this.targets()[0].v)); } }, T+0.90);
+tl.fromTo("#cNN-b2", { width: 0 }, { width: 108, duration: 1.1, ease: "quart.out" }, T+2.80);
+tl.to({ v: 0 }, { v: 3000, duration: 1.1, ease: "quart.out",
+  onUpdate: function () { trocaD("cNN-v2", fmt(this.targets()[0].v)); } }, T+2.80);
+
+
+<!-- ============================================================ 4. ANTES E DEPOIS
+     A esquerda se monta enquanto ele descreve o problema. Quando ele vira a frase,
+     a esquerda perde saturação e a direita se monta. Nunca as duas ao mesmo tempo.
+-->
+<div id="cNN" class="clip livre" data-start="T" data-duration="D" data-track-index="2">
+  <div id="cNN-hl" class="headline" style="top: 92px; font-size: 46px; opacity: 0">o jeito antigo e o jeito de agora</div>
+  <div class="duas" style="top: 240px">
+    <div id="cNN-ce" class="du-col">
+      <div class="du-tag quente">ANTES</div>
+      <div id="cNN-e1" class="du-item">eu abria a ferramenta na mão</div>
+      <div id="cNN-e2" class="du-item">copiava um por um</div>
+      <div id="cNN-e3" class="du-item">levava a tarde inteira</div>
+    </div>
+    <div id="cNN-cd" class="du-col">
+      <div class="du-tag positivo">AGORA</div>
+      <div id="cNN-d1" class="du-item">ela puxa sozinha</div>
+      <div id="cNN-d2" class="du-item">joga direto no CRM</div>
+      <div id="cNN-d3" class="du-item">e me avisa quando acaba</div>
+    </div>
+  </div>
+  <div id="cNN-faixa" class="faixa" style="top: 850px; opacity: 0">
+    <div class="faixa-rot">O QUE MUDOU</div>
+    <div id="cNN-dado" class="faixa-dado">antes eu fazia na mão</div>
+  </div>
+</div>
+<!--JS-->
+tl.fromTo("#cNN-hl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45 }, T+0.36);
+tl.fromTo("#cNN-faixa", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5 }, T);
+tl.fromTo("#cNN-ce", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.45 }, T+0.70);
+tl.fromTo("#cNN-e1", { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.34 }, T+1.10);
+tl.fromTo("#cNN-e2", { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.34 }, T+1.90);
+tl.fromTo("#cNN-e3", { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.34 }, T+2.70);
+/* a virada: a coluna do problema recua e a da solução se monta */
+tl.to("#cNN-ce", { opacity: 0.34, filter: "blur(3px)", duration: 0.34, ease: "quart.inOut" }, T+3.60);
+tl.fromTo("#cNN-cd", { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.45 }, T+3.70);
+tl.fromTo("#cNN-d1", { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: 0.34 }, T+4.10);
+tl.fromTo("#cNN-d2", { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: 0.34 }, T+4.90);
+tl.fromTo("#cNN-d3", { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: 0.34 }, T+5.70);
+
+
+<!-- ============================================================ 5. LISTA VIVA
+     Itens entram um a um com marcador de conferido e o contador do canto sobe.
+     Para "ela faz isso, isso, isso e isso".
+-->
+<div id="cNN" class="clip livre" data-start="T" data-duration="D" data-track-index="2">
+  <div id="cNN-hl" class="headline" style="top: 92px; font-size: 46px; opacity: 0">tudo o que ela faz sem eu pedir</div>
+  <div id="cNN-cnt" class="lv-contador"><span id="cNN-cn">0</span><span class="lv-cnt-rot">tarefas</span></div>
+  <div class="lista-viva" style="top: 240px">
+    <div id="cNN-i1" class="lv-item"><span class="lv-check"></span><span class="lv-txt">responde no WhatsApp</span></div>
+    <div id="cNN-i2" class="lv-item"><span class="lv-check"></span><span class="lv-txt">publica no Instagram</span></div>
+    <div id="cNN-i3" class="lv-item"><span class="lv-check"></span><span class="lv-txt">organiza o CRM</span></div>
+    <div id="cNN-i4" class="lv-item"><span class="lv-check"></span><span class="lv-txt">monta o relatório do dia</span></div>
+  </div>
+  <div id="cNN-faixa" class="faixa" style="top: 850px; opacity: 0">
+    <div class="faixa-rot">A ROTINA DELA</div>
+    <div id="cNN-dado" class="faixa-dado">ela responde no WhatsApp</div>
+  </div>
+</div>
+<!--JS-->
+tl.fromTo("#cNN-hl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45 }, T+0.36);
+tl.fromTo("#cNN-faixa", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5 }, T);
+tl.fromTo("#cNN-cnt", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T+0.70);
+tl.fromTo("#cNN-i1", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.38 }, T+0.90);
+tl.to("#cNN-i1 .lv-check", { backgroundColor: "#24D869", scale: 1.18, duration: 0.26 }, T+1.20);
+tl.to("#cNN-i1 .lv-check", { scale: 1, duration: 0.2 }, T+1.46);
+tl.call(() => trocaD("cNN-cn", "1"), null, T+1.30);
+tl.fromTo("#cNN-i2", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.38 }, T+2.10);
+tl.to("#cNN-i2 .lv-check", { backgroundColor: "#24D869", scale: 1.18, duration: 0.26 }, T+2.40);
+tl.to("#cNN-i2 .lv-check", { scale: 1, duration: 0.2 }, T+2.66);
+tl.call(() => trocaD("cNN-cn", "2"), null, T+2.50);
+
+
+<!-- ============================================================ 6. LINHA DO TEMPO
+     O eixo se desenha, depois cada evento entra na sua marca.
+     Para "às 9 da manhã acontece isso, às 11 aquilo".
+-->
+<div id="cNN" class="clip livre" data-start="T" data-duration="D" data-track-index="2">
+  <div id="cNN-hl" class="headline" style="top: 92px; font-size: 46px; opacity: 0">o dia dela, hora por hora</div>
+  <div class="linha-tempo" style="top: 330px">
+    <div id="cNN-eixo" class="lt-eixo"></div>
+    <div id="cNN-m1" class="lt-marca" style="left: 0">
+      <div class="lt-hora">09:00</div><div class="lt-ponto"></div><div class="lt-ev">puxa os leads da noite</div>
+    </div>
+    <div id="cNN-m2" class="lt-marca" style="left: 356px">
+      <div class="lt-hora">11:00</div><div class="lt-ponto"></div><div class="lt-ev">publica o carrossel</div>
+    </div>
+    <div id="cNN-m3" class="lt-marca" style="left: 712px">
+      <div class="lt-hora">18:00</div><div class="lt-ponto"></div><div class="lt-ev">fecha o relatório</div>
+    </div>
+  </div>
+  <div id="cNN-faixa" class="faixa" style="top: 850px; opacity: 0">
+    <div class="faixa-rot">A AGENDA</div>
+    <div id="cNN-dado" class="faixa-dado">às 9 ela puxa os leads</div>
+  </div>
+</div>
+<!--JS-->
+tl.fromTo("#cNN-hl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45 }, T+0.36);
+tl.fromTo("#cNN-faixa", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5 }, T);
+tl.fromTo("#cNN-eixo", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "quart.inOut" }, T+0.70);
+tl.fromTo("#cNN-m1", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.38 }, T+1.40);
+tl.fromTo("#cNN-m2", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.38 }, T+2.60);
+tl.fromTo("#cNN-m3", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.38 }, T+3.90);
+
+
+<!-- ============================================================ 7. DESTAQUE MIGRANTE
+     A grade já está visível e a moldura ANDA de um item para o outro conforme ele
+     fala de cada um. Para percorrer um menu ou uma tela que já está na tela.
+     A moldura anda por `transform`, nunca por `left`.
+-->
+<div id="cNN" class="clip livre" data-start="T" data-duration="D" data-track-index="2">
+  <div id="cNN-hl" class="headline" style="top: 92px; font-size: 46px; opacity: 0">os menus que eu uso todo dia</div>
+  <div class="grade-dm" style="top: 240px">
+    <div id="cNN-g1" class="dm-item">conversas</div>
+    <div id="cNN-g2" class="dm-item">disparos</div>
+    <div id="cNN-g3" class="dm-item">CRM</div>
+    <div id="cNN-g4" class="dm-item">agentes</div>
+    <div id="cNN-g5" class="dm-item">relatórios</div>
+    <div id="cNN-g6" class="dm-item">integrações</div>
+    <div id="cNN-foco" class="dm-foco"></div>
+  </div>
+  <div id="cNN-faixa" class="faixa" style="top: 850px; opacity: 0">
+    <div class="faixa-rot">O MENU</div>
+    <div id="cNN-dado" class="faixa-dado">aqui ficam as conversas</div>
+  </div>
+</div>
+<!--JS-->
+tl.fromTo("#cNN-hl", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45 }, T+0.36);
+tl.fromTo("#cNN-faixa", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5 }, T);
+tl.fromTo(".grade-dm .dm-item", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.07 }, T+0.70);
+tl.fromTo("#cNN-foco", { opacity: 0 }, { opacity: 1, duration: 0.3 }, T+1.30);
+/* a moldura anda; o item ativo clareia e o anterior volta ao neutro */
+tl.to("#cNN-g1", { color: "#F7F5F0", duration: 0.3 }, T+1.30);
+tl.to("#cNN-foco", { x: 372, duration: 0.5, ease: "quart.inOut" }, T+2.60);
+tl.to("#cNN-g1", { color: "#94A3B8", duration: 0.3 }, T+2.60);
+tl.to("#cNN-g2", { color: "#F7F5F0", duration: 0.3 }, T+2.80);
+tl.to("#cNN-foco", { x: 744, duration: 0.5, ease: "quart.inOut" }, T+4.10);
+tl.to("#cNN-g2", { color: "#94A3B8", duration: 0.3 }, T+4.10);
+tl.to("#cNN-g3", { color: "#F7F5F0", duration: 0.3 }, T+4.30);
+
+
+<!-- ============================================================ O CSS
+     Entra no bloco <style> do esqueleto, depois das classes que já existem.
+-->
+<style>
+/* 1. fluxo */
+.fluxo { position: absolute; left: 64px; width: 1124px; display: flex; align-items: stretch; }
+.fl-bloco { width: 245px; min-height: 300px; background: #1B2438; border: 3px solid #2E3A4E;
+  border-radius: 18px; padding: 26px 22px; opacity: 0; }
+.fl-num { display: inline-block; background: #2E3A4E; color: #94A3B8; font-weight: 800; font-size: 16px;
+  padding: 6px 12px; border-radius: 8px; letter-spacing: 0.06em; }
+.fl-tit { margin-top: 20px; font-weight: 800; font-size: 34px; letter-spacing: -0.02em; color: #F7F5F0; }
+.fl-txt { margin-top: 12px; font-weight: 700; font-size: 21px; line-height: 1.3; color: #94A3B8; }
+.fl-conector { width: 48px; align-self: center; height: 4px; background: #4FD8EF;
+  transform-origin: 0% 50%; }
+
+/* 2. contador */
+.cont-par { position: absolute; left: 64px; width: 1124px; display: flex; gap: 44px; }
+.cont-bloco { flex: 1; background: #1B2438; border: 3px solid #2E3A4E; border-radius: 20px;
+  padding: 34px 30px; opacity: 0; }
+.cont-rot { font-weight: 700; font-size: 19px; letter-spacing: 0.16em; color: #94A3B8; }
+.cont-num { margin-top: 14px; font-weight: 900; font-size: 130px; line-height: 1;
+  letter-spacing: -0.045em; color: #4FD8EF; font-variant-numeric: tabular-nums; }
+.cont-num.quente { color: #F5402E; }
+.cont-uni { margin-top: 10px; font-weight: 700; font-size: 26px; color: #94A3B8; }
+
+/* 3. barras */
+.barras { position: absolute; left: 64px; width: 1124px; }
+.ba-linha { margin-bottom: 54px; }
+.ba-rot { font-weight: 700; font-size: 26px; color: #94A3B8; margin-bottom: 12px; }
+.ba-tubo { display: inline-block; vertical-align: middle; width: 860px; height: 58px;
+  background: #1B2438; border-radius: 12px; overflow: hidden; }
+.ba-fill { width: 0; height: 58px; border-radius: 12px; }
+.ba-val { display: inline-block; vertical-align: middle; margin-left: 26px; font-weight: 900;
+  font-size: 44px; font-variant-numeric: tabular-nums; }
+.ba-val.quente { color: #F5402E; }
+.ba-val.positivo { color: #24D869; }
+
+/* 4. antes e depois */
+.duas { position: absolute; left: 64px; width: 1124px; display: flex; gap: 40px; }
+.du-col { flex: 1; background: #1B2438; border: 3px solid #2E3A4E; border-radius: 20px;
+  padding: 28px 26px; opacity: 0; }
+.du-tag { display: inline-block; font-weight: 800; font-size: 17px; letter-spacing: 0.16em;
+  padding: 7px 14px; border-radius: 8px; }
+.du-tag.quente { background: #F5402E; color: #0F172A; }
+.du-tag.positivo { background: #24D869; color: #0F172A; }
+.du-item { margin-top: 26px; font-weight: 700; font-size: 29px; line-height: 1.26; color: #F7F5F0;
+  opacity: 0; padding: 14px 18px; background: #141C2E; border-radius: 12px; }
+
+/* 5. lista viva */
+.lista-viva { position: absolute; left: 64px; width: 1124px; }
+.lv-item { display: flex; align-items: center; gap: 22px; margin-bottom: 34px; opacity: 0; }
+.lv-check { width: 44px; height: 44px; border-radius: 10px; background: #2E3A4E; flex: none; }
+.lv-txt { font-weight: 800; font-size: 42px; letter-spacing: -0.02em; color: #F7F5F0; }
+.lv-contador { position: absolute; right: 64px; top: 96px; text-align: right; opacity: 0; }
+.lv-contador span:first-child { font-weight: 900; font-size: 84px; line-height: 1; color: #24D869;
+  font-variant-numeric: tabular-nums; }
+/* margin-top obrigatorio: o numero de 84px com line-height 1 transborda a caixa e colide */
+.lv-cnt-rot { display: block; margin-top: 14px; font-weight: 700; font-size: 18px; letter-spacing: 0.16em; color: #94A3B8; }
+
+/* 6. linha do tempo */
+.linha-tempo { position: absolute; left: 64px; width: 1124px; height: 280px; }
+.lt-eixo { position: absolute; left: 0; top: 96px; width: 1064px; height: 4px; background: #2E3A4E;
+  transform-origin: 0% 50%; }
+.lt-marca { position: absolute; top: 0; width: 340px; opacity: 0; }
+.lt-hora { font-weight: 900; font-size: 40px; letter-spacing: -0.02em; color: #4FD8EF; }
+.lt-ponto { margin-top: 22px; width: 22px; height: 22px; border-radius: 50%; background: #4FD8EF; }
+.lt-ev { margin-top: 24px; font-weight: 700; font-size: 26px; line-height: 1.26; color: #F7F5F0; }
+
+/* 7. destaque migrante */
+.grade-dm { position: absolute; left: 64px; width: 1124px; display: flex; flex-wrap: wrap; gap: 24px; }
+.dm-item { width: 348px; height: 132px; background: #1B2438; border-radius: 16px;
+  display: flex; align-items: center; padding: 0 28px; font-weight: 800; font-size: 32px;
+  letter-spacing: -0.02em; color: #94A3B8; opacity: 0; }
+.dm-foco { position: absolute; left: 0; top: 0; width: 348px; height: 132px; border-radius: 16px;
+  border: 4px solid #4FD8EF; opacity: 0; pointer-events: none; }
+</style>

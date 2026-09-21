@@ -1,0 +1,70 @@
+/* Shared design system for Gennaro-style overlay elements (transparent stage) */
+@font-face{font-family:'Mont';src:url('/fonts/Montserrat-Black.ttf');font-weight:900;font-style:normal;font-display:block;}
+@font-face{font-family:'MontX';src:url('/fonts/Montserrat-ExtraBold.ttf');font-weight:800;font-style:normal;font-display:block;}
+@font-face{font-family:'MontB';src:url('/fonts/Montserrat-Bold.ttf');font-weight:700;font-style:normal;font-display:block;}
+
+:root{
+  --white:#FFFFFF;
+  --coral:#F5402E;      /* keyword red-coral */
+  --green:#24D869;      /* money / positive green */
+  --gold:#FFC53D;
+  --cyan:#3EC8FF;       /* accent that harmonizes with his neon room */
+  --violet:#9B6BFF;
+  --ink:#0B0D12;        /* chip fill */
+  --ink2:#12151C;
+  --stroke:rgba(255,255,255,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+html,body{width:1080px;height:1920px;background:transparent;overflow:hidden;}
+#stage{position:absolute;inset:0;width:1080px;height:1920px;}
+.abs{position:absolute;}
+.cx{left:50%;transform:translateX(-50%);}   /* horizontal center (compose with JS transforms carefully) */
+
+/* ---- chip (Gennaro list-build pill) ---- */
+.chip{
+  position:absolute;left:50%;
+  display:flex;align-items:center;gap:22px;
+  background:linear-gradient(180deg,#151922 0%,#0B0D12 100%);
+  border:2px solid var(--stroke);
+  border-radius:22px;
+  padding:26px 40px;
+  box-shadow:0 24px 50px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+  white-space:nowrap;
+  will-change:transform,opacity;
+}
+.chip .tx{font-family:'Mont';color:#fff;font-size:46px;letter-spacing:.5px;text-transform:uppercase;line-height:1;}
+.chip .badge{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+
+/* ---- glass card ---- */
+.card{
+  position:absolute;left:50%;
+  background:linear-gradient(180deg,rgba(22,26,34,.94) 0%,rgba(9,11,16,.96) 100%);
+  border:2px solid var(--stroke);
+  border-radius:34px;
+  box-shadow:0 40px 90px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08);
+  will-change:transform,opacity;
+}
+
+/* ---- pill (CTA "comente") ---- */
+.pill{
+  position:absolute;left:50%;
+  display:flex;align-items:center;gap:26px;
+  background:#0A0C10;border:2px solid rgba(255,255,255,.16);
+  border-radius:999px;padding:22px 26px 22px 40px;
+  box-shadow:0 26px 60px rgba(0,0,0,.6);
+}
+
+/* ---- iOS-style DM toast ---- */
+.toast{
+  position:absolute;left:50%;
+  display:flex;align-items:center;gap:24px;
+  width:852px;padding:26px 30px;
+  background:rgba(238,240,244,.92);
+  border-radius:34px;
+  box-shadow:0 30px 70px rgba(0,0,0,.5);
+  will-change:transform,opacity;
+}
+
+.glow-cyan{box-shadow:0 0 0 2px rgba(62,200,255,.25),0 24px 60px rgba(62,200,255,.20),0 24px 50px rgba(0,0,0,.5);}
+.glow-green{box-shadow:0 0 0 2px rgba(36,216,105,.30),0 20px 60px rgba(36,216,105,.22),0 24px 50px rgba(0,0,0,.5);}
+.glow-coral{box-shadow:0 0 0 2px rgba(245,64,46,.30),0 20px 60px rgba(245,64,46,.22),0 24px 50px rgba(0,0,0,.5);}

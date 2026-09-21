@@ -1,0 +1,4 @@
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const fmt = (n) => Math.round(n).toLocaleString("pt-BR");
