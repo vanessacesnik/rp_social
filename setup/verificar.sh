@@ -8,9 +8,19 @@ falta(){ printf "  \033[31mFALTA\033[0m %s\n" "$1"; }
 aviso(){ printf "  \033[33mAVISO\033[0m %s\n" "$1"; }
 titulo(){ printf "\n\033[1m%s\033[0m\n" "$1"; }
 
+# Se o venv do repositorio existe, usa ele: senao o checador acusa falta do que
+# esta instalado la dentro e da alarme falso.
+RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -z "${VIRTUAL_ENV:-}" ] && [ -f "$RAIZ/.venv/bin/activate" ]; then
+  # shellcheck disable=SC1091
+  . "$RAIZ/.venv/bin/activate"
+  VENV_AUTO=1
+fi
+
 echo "======================================================"
 echo " VERIFICACAO DE AMBIENTE - super-edicao-video-avalanche"
 echo "======================================================"
+[ "${VENV_AUTO:-0}" = "1" ] && echo " (usando o venv em $RAIZ/.venv)"
 
 titulo "MAQUINA"
 echo "  sistema   : $(. /etc/os-release 2>/dev/null && echo "$PRETTY_NAME" || uname -s)"
@@ -74,7 +84,7 @@ fi
 titulo "NAVEGADOR PARA OS OVERLAYS"
 if command -v npx >/dev/null 2>&1; then
   if python3 -c "import playwright" 2>/dev/null; then
-    python3 - <<'PY' 2>/dev/null || echo "  \033[33mAVISO\033[0m playwright instalado, mas sem navegador baixado (rode: playwright install chromium)"
+    python3 - <<'PY' 2>/dev/null || aviso "playwright instalado, mas sem navegador que abra (rode: playwright install chromium)"
 from playwright.sync_api import sync_playwright
 with sync_playwright() as p:
     b = p.chromium.launch(); b.close()

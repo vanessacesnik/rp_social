@@ -52,7 +52,46 @@ else
 fi
 
 passo "5/6  Chromium do Playwright"
-playwright install --with-deps chromium
+# Presenca de pasta NAO e prova: o playwright exige o build exato da versao dele, e um
+# chromium de outra versao no disco passa no teste de pasta e falha na hora de abrir.
+# A unica checagem que vale e tentar abrir.
+abre_chromium(){
+  python3 - <<'PYCHK' 2>/dev/null
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    b = p.chromium.launch(); b.close()
+PYCHK
+}
+CHROMIUM_OK=0
+if abre_chromium; then
+  echo "chromium ja abre, nao preciso baixar."
+  CHROMIUM_OK=1
+elif playwright install --with-deps chromium && abre_chromium; then
+  echo "chromium baixado e abrindo."
+  CHROMIUM_OK=1
+else
+  # rede fechada e o caso comum em VPS: cai para o chromium do sistema (apt)
+  echo "download bloqueado ou build incompativel; tentando o chromium do sistema..."
+  $SUDO apt-get install -y --no-install-recommends chromium 2>/dev/null \
+    || $SUDO apt-get install -y --no-install-recommends chromium-browser 2>/dev/null || true
+  if command -v chromium >/dev/null 2>&1 || command -v chromium-browser >/dev/null 2>&1; then
+    export PLAYWRIGHT_BROWSERS_PATH=0
+    if abre_chromium; then
+      echo "usando o chromium do sistema (PLAYWRIGHT_BROWSERS_PATH=0)."
+      grep -q "PLAYWRIGHT_BROWSERS_PATH" "$VENV/bin/activate" \
+        || echo "export PLAYWRIGHT_BROWSERS_PATH=0" >> "$VENV/bin/activate"
+      echo "  (export gravado no activate do venv)"
+      CHROMIUM_OK=1
+    fi
+  fi
+fi
+if [ "$CHROMIUM_OK" != "1" ]; then
+  printf "\n\033[33mAVISO\033[0m  fiquei sem chromium.\n"
+  echo "  Todo o resto foi instalado. Corte, legenda queimada e encode funcionam;"
+  echo "  os overlays HTML (faixa, cards, infograficos) nao renderizam sem ele."
+  echo "  Saidas: liberar cdn.playwright.dev no firewall e rodar 'playwright install chromium',"
+  echo "  ou instalar o chromium pelo apt e exportar PLAYWRIGHT_BROWSERS_PATH=0."
+fi
 
 passo "6/6  Conferindo"
 python3 - <<'PY'
@@ -60,11 +99,8 @@ import importlib
 for m in ("PIL", "numpy", "playwright"):
     importlib.import_module(m); print(f"  {m} OK")
 PY
-python3 -c "
-from playwright.sync_api import sync_playwright
-with sync_playwright() as p:
-    b = p.chromium.launch(); b.close()
-print('  chromium abre OK')"
+[ "$CHROMIUM_OK" = "1" ] && echo "  chromium OK" || echo "  chromium PENDENTE (veja o aviso acima)"
+command -v ffmpeg  >/dev/null && echo "  ffmpeg OK"
 command -v whisper >/dev/null && echo "  whisper OK ($(command -v whisper))"
 
 cat <<FIM
